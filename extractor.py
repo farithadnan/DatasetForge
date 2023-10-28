@@ -60,8 +60,8 @@ class DataHandler:
                 
             # Print the output
             print(f"\nTotal word count: {total_word_counts}")
-            print(f"\nEstimated tokens: {total_token_counts}")
-            print(f"\nEstimated cost of fine-tuning: ${total_estimated_costs}")
+            print(f"Estimated tokens: {total_token_counts}")
+            print(f"Estimated cost of fine-tuning: ${total_estimated_costs}\n")
 
             # Return the processed data
             return processed_data
