@@ -1,0 +1,12 @@
+# byte-compiled / optimized / DLL files
+__pycache__/
+
+# environment
+/venv
+
+# project's secrets
+/Secrets/.env
+/Secrets/gs_private_keys.json
+
+# DatasetForge Output
+/output/*.jsonl
