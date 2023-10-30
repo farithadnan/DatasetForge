@@ -43,6 +43,7 @@ To estimate the cost of your dataset when it is fine-tuned later, you need to co
 > For more details, refer to [How to count tokens with tiktoken](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb)
 
 **Step 5: Run the Project**
+
 Activate your virtual environment then run the main python script:
 
 ```bash
