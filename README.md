@@ -1,6 +1,6 @@
 # DatasetForge ⚒️
 
-DatasetForge is a Python project designed to extract data from Google Sheets and convert it into JSONL formatted dataset, which is suitable for fine-tuning tasks (OpenAI). This tool also uses the library called [tiktoken](https://pypi.org/project/tiktoken/) to estimate the cost of fine-tuning tasks.
+DatasetForge is a Python project designed to extract data from Google Sheets and convert it into JSONL formatted dataset, which is suitable for fine-tuning (`davinci-002` model) tasks (OpenAI). This tool also uses the library called [tiktoken](https://pypi.org/project/tiktoken/) to estimate the cost of fine-tuning (`davinci-002` model) tasks.
 
 ## Requirements ⭐
 
@@ -39,7 +39,7 @@ Ensure you have `.env` file structured with the necessary configuration details.
 
 **Step 4: Set up Encoding**
 
-To estimate the cost of your dataset when it is fine-tuned later, you need to configure the encoding in `extractor.py`. By default, it is configured to `r50k_base` encoding, which refers to GPT-3 models like `davinci`.
+To estimate the cost of your dataset when it is fine-tuned later, you need to configure the encoding in `extractor.py`. By default, it is configured to `r50k_base` encoding, which refers to GPT-3 models like (`davinci-002`).
 > For more details, refer to [How to count tokens with tiktoken](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb)
 
 **Step 5: Run the Project**
