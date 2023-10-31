@@ -4,7 +4,7 @@ DatasetForge is a Python project designed to extract data from Google Sheets and
 
 ## Requirements ⭐
 
-- You must have Google Sheets data that is represented in a prompt-completion structure.
+- You must have Google Sheets data that is represented in a prompt-completion (legacy) structure.
   > Refer to `sheets_sample.ods` for details
 - You must [create a Google Service Account in Google Cloud Platform](https://www.howtogeek.com/devops/how-to-create-and-use-service-accounts-in-google-cloud-platform/).
 - You must [enable the Google Sheets API for that Google Service Account](https://support.google.com/googleapi/answer/6158841?hl=en).
