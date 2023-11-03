@@ -2,7 +2,6 @@ import os
 from sys import version
 import hydra
 import logging
-from dotenv import dotenv_values
 from omegaconf import DictConfig
 from converter import Converter
 from extractor import GSpreadClient, DataHandler
