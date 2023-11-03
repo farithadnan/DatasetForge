@@ -29,17 +29,17 @@ Install the required Python packages by running below command on your terminal:
 
 **Step 3: Set Up Google Sheets Config**
 
-Ensure you have `.env` file structured with the necessary configuration details. Make sure to include:
-- `GS_CONFIG_PATH`: Path to Google Sheets configuration file.
-- `GSPREAD_URL`: URL of the Google Sheet to extract data from.
-- `SHEET_INDEX`: Index of the specific sheet within the Google Sheet.
-- `FILENAME`: Name for the output JSONL file.
-> Refer to a file called `.env.sample` for more info.
+Ensure that the configuration file (e.g., `config.yaml`) contains essential settings such as:
+- Path to Google Sheets credentials file (private keys).
+- URL of the Google Sheet to extract data from.
+- Index of the specific sheet within the Google Sheet.
+- Name for the output JSONL file.
+> Refer to a file called `config.yaml.sample` for more info.
 
 
-**Step 4: Set up Encoding**
+**Step 4: Set up model for Encoding**
 
-To estimate the cost of your dataset when it is fine-tuned later, you need to configure the encoding in `extractor.py`. By default, it is configured to `r50k_base` encoding, which refers to GPT-3 models like (`davinci-002`).
+To estimate the cost of your dataset when it is fine-tuned later, you need to configure the encoding in `config.yaml`. By default, it is configured to `r50k_base` encoding, which refers to GPT-3 models like (`davinci-002`).
 > For more details, refer to [How to count tokens with tiktoken](https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb)
 
 **Step 5: Run the Project**
