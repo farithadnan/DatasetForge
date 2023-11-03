@@ -1,0 +1,10 @@
+gSheet: 
+  creds_path: PATH_TO_GOOGLE_SERVICE_PRIVATE_KEYS (string)
+  gs_url: YOUR_GOOGLE_SPREADSHEET_URL (string)
+  sheet_index: YOUR_GOOGLE_SHEET_INDEX (int)
+
+output:
+  filename: Output.jsonl
+
+openAI:
+  model: r50k_base
