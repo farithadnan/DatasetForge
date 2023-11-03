@@ -1,5 +1,4 @@
 import os
-from sys import version
 import hydra
 import logging
 from omegaconf import DictConfig
