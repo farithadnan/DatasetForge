@@ -27,6 +27,8 @@ class GSpreadClient:
 class DataHandler:
     def __init__(self, cfg: DictConfig, gspread_client: gspread.client, google_sheet_url: str):
         self.openai_model = cfg.openAI.model
+        self.token_limit = cfg.openAI.token_limit
+        self.fine_tuning_cost_per_1000_tokens = cfg.openAI.fine_tuning_cost_per_1000_tokens
         self.gspread_client = gspread_client
         self.google_sheet_url = google_sheet_url
 
@@ -134,11 +136,11 @@ class DataHandler:
         total_token_count = len(encoder.encode(combined_text))
 
         # Check if the total number of tokens has reached the limit
-        if total_token_count > 2048:
+        if total_token_count > self.token_limit:
             raise ValueError("Error: The total number of tokens is greater than 2048.")
         
         # Calculate the estimated cost for fine-tuning
-        estimated_cost = total_token_count * 0.0300/1000
+        estimated_cost = total_token_count * self.fine_tuning_cost_per_1000_tokens/1000
         total_word_count = len(combined_text.split())
 
         # Return Estimated Cost
