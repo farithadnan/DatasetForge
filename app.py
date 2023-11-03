@@ -1,74 +1,48 @@
-import logging
-from logging import config
 import os
-from converter import Converter
+from sys import version
+import hydra
+import logging
 from dotenv import dotenv_values
+from omegaconf import DictConfig
+from converter import Converter
 from extractor import GSpreadClient, DataHandler
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Class to manage the config file
-class ConfigManager:
-
-    # Constructor
-    def __init__(self, config_path):
-        self.config_path = config_path
-
-    # Method to get the gSheet config from the .env file
-    def load_config(self):
-
-        # Get the config from the .env file
-        config = dotenv_values(self.config_path)
-        google_sheet_keys_path = config["GS_CONFIG_PATH"]
-        google_sheet_url = config["GSPREAD_URL"]
-        sheet_index = int(config["SHEET_INDEX"])
-        filename = config["FILENAME"]
-
-        # Check if the config is valid
-        if not google_sheet_keys_path or not google_sheet_url:
-            print("Error: GS_CONFIG_PATH and GSPREAD_URL must be provided in the .env file.")
-            return None
-
-        # Return the config details
-        return google_sheet_keys_path, google_sheet_url, sheet_index, filename
-
-# Main function
-def main():
+@hydra.main(version_base=None, config_path="config", config_name="config.yaml")
+def main(cfg: DictConfig):
     # Configure logging
     logger = logging.getLogger("main")
 
-    # Get the current directory
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    # Get the gSheet config from the .env file
-    config_path = os.path.join(current_dir, "Secrets", ".env")
-    logger.info("Fetch Configuration Details...")
-    gspread_config = ConfigManager(config_path).load_config()
-    
-    # Check if the config is valid
-    if not gspread_config:
-        logger.error("Invalid gspread configuration. Exiting...")
-        return
-    
-    # Assign the config details
-    google_sheet_keys_path, google_sheet_url, sheet_index, filename = gspread_config
-    
-    # Authenticate with Google Sheets
-    logger.info("Authenticating with Google Sheets...")
-    client = GSpreadClient(google_sheet_keys_path).Authenticate()
+    try:        
+        # Authenticate with Google Sheets
+        logger.info("Authenticating with Google Sheets...")
+        gs = cfg.gSheet
+        client = GSpreadClient().Authenticate(gs.creds_path)
 
-    # Extract data from Google Sheets
-    logger.info("Extracting Data...")
-    data_handler = DataHandler(client, google_sheet_url)
-    processed_data = data_handler.extract_data(sheet_index)
+        # Extract data from Google Sheets
+        logger.info("Extracting Data...\n")
+        data_handler = DataHandler(cfg, client, gs.gs_url)
+        processed_data = data_handler.extract_data(gs.sheet_index)
 
-    # Convert data to JSONL format
-    logger.info("Converting Data to JSONL Format...")
-    converter = Converter()
-    converter.to_jsonl(processed_data, filename)
+        # Convert data to JSONL format
+        logger.info("Converting Data to JSONL Format...")
 
-    logger.info("Dataset for fine-tuning created successfully. Exiting...")
+        # Get set directories
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(current_dir, "dataset")
+
+        # Check if "output" folder exists, and create it if not
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        converter = Converter(output_dir)
+        converter.to_jsonl(processed_data, cfg.output.filename)
+
+        logger.info("Dataset for fine-tuning created successfully. Exiting...")
+    except Exception as e:
+        logger.exception(e)
 
 # Call the main function
 if __name__ == "__main__":
