@@ -7,4 +7,6 @@ output:
   filename: Output.jsonl
 
 openAI:
-  model: r50k_base
+  model: p50k_base
+  token_limit: 2048
+  fine_tuning_cost_per_1000_tokens: 0.0300
