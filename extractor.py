@@ -83,40 +83,34 @@ class DataHandler:
 
     def filter_data(self, prompt: str, completion: str) -> List[Dict[str, str]]:
         filtered_data = []
-        try:
-            # Remove leading & trailing whitepace in the left & the right
-            prompt = prompt.lstrip().rstrip()
-            completion = completion.lstrip().rstrip()
+        # Remove leading & trailing whitepace in the left & the right
+        prompt = prompt.lstrip().rstrip()
+        completion = completion.lstrip().rstrip()
 
-            # Check and add "\n\n###\n\n" at the end of prompt
-            if not prompt.endswith("\n\n###\n\n"):
-                prompt += " \n\n###\n\n"
-            
-            # Check and add "." at the end of completion
-            if not completion.endswith("."):
-                completion += "."
-
-            # Check and add "END" at the end of completion
-            if not completion.endswith("END"):
-                completion += " END"
-            
-            ## Check and add " " at the front of completion
-            if not completion.startswith(" "):
-                completion = " " + completion
-            
-            # Check tokens validity
-            total_word_count, total_token_count, estimated_cost = self.check_tokens(prompt, completion)
-
-            # Append the processed data
-            filtered_data.append({"prompt": prompt, "completion": completion})
-
-            # Return the processed data
-            return filtered_data, total_word_count, total_token_count, estimated_cost
+        # Check and add "\n\n###\n\n" at the end of prompt
+        if not prompt.endswith("\n\n###\n\n"):
+            prompt += " \n\n###\n\n"
         
-        except (AttributeError, KeyError) as e:
-            print(f"An AttributeError or KeyError occurred: {e}")
-        except Exception as e:
-            raise RuntimeError(f"Failed to extract data from Google Sheets: {e}")
+        # Check and add "." at the end of completion
+        if not completion.endswith("."):
+            completion += "."
+
+        # Check and add "END" at the end of completion
+        if not completion.endswith("END"):
+            completion += " END"
+        
+        ## Check and add " " at the front of completion
+        if not completion.startswith(" "):
+            completion = " " + completion
+        
+        # Check tokens validity
+        total_word_count, total_token_count, estimated_cost = self.check_tokens(prompt, completion)
+
+        # Append the processed data
+        filtered_data.append({"prompt": prompt, "completion": completion})
+
+        # Return the processed data
+        return filtered_data, total_word_count, total_token_count, estimated_cost
 
 
     def check_tokens(self, prompt: str, completion: str):
@@ -130,26 +124,23 @@ class DataHandler:
         Returns:
             The total number of words, the total number of tokens, and the estimated cost
         '''
-        try:
-            # Concatenate prompt and completion
-            combined_text = prompt + " " + completion
+        # Concatenate prompt and completion
+        combined_text = prompt + " " + completion
 
-            # Create a GPT-3 encoder instance
-            encoder = tiktoken.get_encoding(self.openai_model)
+        # Create a GPT-3 encoder instance
+        encoder = tiktoken.get_encoding(self.openai_model)
 
-            # Calculate the number of tokens
-            total_token_count = len(encoder.encode(combined_text))
+        # Calculate the number of tokens
+        total_token_count = len(encoder.encode(combined_text))
 
-            # Check if the total number of tokens has reached the limit
-            if total_token_count > 2048:
-                raise ValueError("Error: The total number of tokens is greater than 2048.")
-            
-            # Calculate the estimated cost for fine-tuning
-            estimated_cost = total_token_count * 0.0300/1000
-            total_word_count = len(combined_text.split())
+        # Check if the total number of tokens has reached the limit
+        if total_token_count > 2048:
+            raise ValueError("Error: The total number of tokens is greater than 2048.")
+        
+        # Calculate the estimated cost for fine-tuning
+        estimated_cost = total_token_count * 0.0300/1000
+        total_word_count = len(combined_text.split())
 
-            # Return Estimated Cost
-            return total_word_count, total_token_count, estimated_cost
-            
-        except Exception as e:
-            raise RuntimeError(f"Failed to check tokens: {e}")
+        # Return Estimated Cost
+        return total_word_count, total_token_count, estimated_cost
+
