@@ -3,7 +3,9 @@ import hydra
 import logging
 from omegaconf import DictConfig
 from converter import Converter
-from extractor import GSpreadClient, DataHandler
+from sheets import GSpreadClient, DataHandler
+from normalizer import Normalizer
+from validator import Validator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,7 +24,37 @@ def main(cfg: DictConfig):
         # Extract data from Google Sheets
         logger.info("Extracting Data...\n")
         data_handler = DataHandler(cfg, client, gs.gs_url)
-        processed_data = data_handler.extract_data(gs.sheet_index)
+
+        # Initialize Normalizer and Validator
+        normalizer = Normalizer()
+        validator = Validator(cfg.openAI.model, cfg.openAI.token_limit, cfg.openAI.fine_tuning_cost_per_1000_tokens)
+
+        # Extract and process data
+        rows = data_handler.extract_data(gs.sheet_index)
+        processed_data = []
+        total_word_counts = 0
+        total_token_counts = 0
+        total_estimated_costs = 0
+
+        for row in rows[1:]:
+            prompt, completion = row[0], row[1]
+            if prompt and completion:
+                normalized_data = normalizer.normalize(prompt, completion)
+                prompt = normalized_data["prompt"]
+                completion = normalized_data["completion"]
+
+                total_word_count, total_token_count, estimated_cost = validator.check_tokens(prompt, completion)
+
+                total_word_counts += total_word_count
+                total_token_counts += total_token_count
+                total_estimated_costs += estimated_cost
+
+                processed_data.append({"prompt": prompt, "completion": completion})
+
+        # Print the output
+        logger.info(f"Total word count: {total_word_counts}")
+        logger.info(f"Estimated tokens: {total_token_counts}")
+        logger.info(f"Estimated cost of fine-tuning: ${total_estimated_costs}\n")
 
         # Convert data to JSONL format
         logger.info("Converting Data to JSONL Format...")
